@@ -1,0 +1,89 @@
+graph TB
+    %% --- STYLING ---
+    classDef hardware fill:#e1e1e1,stroke:#333,stroke-width:2px;
+    classDef memory fill:#fff2cc,stroke:#d6b656,stroke-width:2px;
+    classDef logic fill:#dae8fc,stroke:#6c8ebf,stroke-width:2px;
+    classDef safety fill:#f8cecc,stroke:#b85450,stroke-width:2px;
+    classDef boot fill:#d5e8d4,stroke:#82b366,stroke-width:2px;
+
+    %% --- EXTERNAL HARDWARE LAYER ---
+    subgraph External_Peripherals ["External Hardware & I/O"]
+        direction TB
+        CAM[("📷 OV2640 Camera<br/>(DVP Interface)")]:::hardware
+        TFT[("📺 ST7735 Display<br/>(SPI Interface)")]:::hardware
+        SD[("💾 SD Card<br/>(SPI Interface)")]:::hardware
+        BTN[("🎮 Controls<br/>(Buttons/Joystick)")]:::hardware
+        USB[("🔌 USB-C<br/>(Power & UVC)")]:::hardware
+    end
+
+    %% --- ESP32-S3 SOC LAYER ---
+    subgraph ESP32_S3 ["ESP32-S3 SoC Architecture"]
+        direction TB
+
+        %% GPIO DRIVERS
+        subgraph Drivers ["Hardware Abstraction Layer (HAL)"]
+            HAL_CAM["Camera Driver<br/>GPIO 1,4-14,21,47,48"]:::hardware
+            HAL_SPI["SPI Bus Master<br/>GPIO 39(MOSI), 40(SCK), 41(MISO)"]:::hardware
+            HAL_GPIO["Input ISRs<br/>GPIO 15-18"]:::hardware
+        end
+
+        %% MEMORY CONTROLLER
+        subgraph Memory_Map ["Memory Architecture"]
+            subgraph SRAM ["Internal SRAM (400KB)"]
+                STACK["System Stack"]:::memory
+                WDT["🐶 Safety Watchdog"]:::safety
+                BOOT["🚀 Bootloader<br/>1. SD Init<br/>2. Cam Init<br/>3. Alloc Mem"]:::boot
+                LOGIC["⚡ Main Loop<br/>(State Machine)"]:::logic
+            end
+
+            subgraph PSRAM ["External PSRAM (8MB)"]
+                BUF_RAW["buffer_raw<br/>(1600x1200 RGB565)<br/>~3.8MB"]:::memory
+                BUF_VIEW["buffer_view<br/>(320x240 RGB565)<br/>~150KB"]:::memory
+                BUF_JPEG["buffer_jpeg<br/>(Compressed)"]:::memory
+                PY_MODS["PyForge<br/>Mod Heap"]:::memory
+            end
+        end
+
+        %% PROCESSING ENGINE
+        subgraph Processing ["Core Logic"]
+            DMA["🔄 DMA Controller"]:::hardware
+            FILTER["🎨 Filter Engine<br/>(Downsample -> LUT)"]:::logic
+            ENCODER["💾 JPEG Encoder"]:::logic
+        end
+    end
+
+    %% --- CONNECTIONS ---
+
+    %% Video Pipeline (High Speed)
+    CAM ==>|8-bit Data| HAL_CAM
+    HAL_CAM ==>|DMA Transfer| DMA
+    DMA ==>|Write| BUF_RAW
+    BUF_RAW ==>|Downscale Read| FILTER
+    FILTER ==>|Write Processed| BUF_VIEW
+    BUF_VIEW ==>|SPI Write| HAL_SPI
+    
+    %% Capture Pipeline
+    BUF_RAW -.->|On Trigger| ENCODER
+    ENCODER -.->|Write JPEG| BUF_JPEG
+    BUF_JPEG -.->|Flush| HAL_SPI
+
+    %% Hardware Outputs
+    HAL_SPI -->|CS:42| TFT
+    HAL_SPI -->|CS:46| SD
+    USB -.->|5V Power| HAL_CAM
+
+    %% Control Logic
+    BTN -->|Interrupt| HAL_GPIO
+    HAL_GPIO -->|Event| LOGIC
+    LOGIC -->|State Change| FILTER
+    
+    %% Boot & Safety
+    BOOT -->|Success| LOGIC
+    BOOT -->|Fail| WDT
+    LOGIC -->|Tick| WDT
+    WDT -.->|Timeout| BOOT
+    
+    %% Boot Hardware Config
+    BOOT -.->|Init| HAL_CAM
+    BOOT -.->|Init| HAL_SPI
+    BOOT -.->|Mount| SD
