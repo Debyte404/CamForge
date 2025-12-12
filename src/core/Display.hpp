@@ -22,7 +22,7 @@ inline Adafruit_ST7735 tft(TFT_CS, TFT_DC, TFT_RST);
 // Call once at boot
 inline void displayInit() {
   vspi.begin(TFT_SCLK, -1, TFT_MOSI, TFT_CS);
-  tft.initR(INITR_BLACKTAB);    // switch if your module needs GREENTAB/REDTAB
+  tft.initR(INITR_GREENTAB);    // switch if your module needs GREENTAB/REDTAB
   tft.setRotation(1);           // 160x128 landscape
   tft.fillScreen(ST77XX_BLACK);
   tft.setSPISpeed(40000000);    // try 40 MHz; if unstable, reduce
