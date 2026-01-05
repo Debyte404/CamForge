@@ -188,9 +188,9 @@ MIT License - Use freely, mod freely, share freely.
 ---
 
 ## 🙏 Credits
-
+- **Debyte** - Original Owner 
 - **Teerth Sharma** - owner of seal cult
-- **Debyte** - Original game platform
 - **Espressif** - ESP32-S3 & esp32-camera
 - **Adafruit** - GFX & ST7735 libraries
+
 
