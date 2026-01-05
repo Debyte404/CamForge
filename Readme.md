@@ -1,242 +1,196 @@
-# 📸 OpenCamX Proposal  
-### A Modular, Hackable, Community-Driven Open-Source Camera Platform
+# 📸 OpenCamX OS
 
-OpenCamX is a new kind of device: **a camera designed to be hacked, modded, extended, and reimagined by anyone**.  
-Built using ESP32-CAM and ESP32-S3 boards, it is both **a multi-purpose camera** and **a creative computing platform**—similar to how TI calculators became platforms for games, tools, and custom firmware.
+> A modular, hackable, open-source camera platform for ESP32-S3
 
-Our goal is to ship a **1-week MVP prototype** and build the foundation for a community-driven ecosystem.
+OpenCamX transforms your ESP32-S3 into a **multi-purpose camera system** with USB webcam, video recording, real-time filters, and Python scripting support via the PyForge transpiler.
 
 ---
 
-# ⭐ Core Idea (In Simple Terms)
+## 🎯 Features
 
-OpenCamX = **Camera + Tiny Computer + Modding Platform**
+| Feature | Description |
+|---------|-------------|
+| **USB Webcam** | Stream up to 1600x1200 MJPEG via USB-OTG |
+| **POV Recording** | Record video clips to SD card |
+| **Edge Detection** | Real-time Sobel edge detection |
+| **10+ Filters** | Vintage, Cool, Vibrant, Sepia, Grayscale, Sharpen, Blur |
+| **PyForge** | Write mods in Python, compile to C++ |
+| **OTA Updates** | Download firmware from GitHub |
+| **LED Flash** | Built-in flashlight control |
+| **IR Night Mode** | PWM-controlled IR LEDs |
 
-- Use it as a **webcam**  
-- Use it as a **POV action camera**  
-- Use it for **edge detection / simple computer vision**  
-- Use it as a **retro / disposable camera**  
-- Add **flashlights, IR night vision, sensors, displays**  
-- Run **mods**, **filters**, **games**, and **custom code**  
-
-Just like TI calculators or Arduino boards, OpenCamX is meant to spark creativity.
-
----
-
-# 🎯 Vision
-
-To build the **world’s most accessible, hackable, modular camera system**, enabling people to create:
-
-- Custom photography filters  
-- Experimental art tools  
-- Mini games  
-- Computer vision demos  
-- Hardware expansions  
-- New camera modes  
-- New UI experiences  
-
-OpenCamX is not a closed product.  
-It’s a **platform**.
+> **⚡ CPU Optimized**: All filters use integer math (no floats) for maximum performance on ESP32 without GPU.
 
 ---
 
-# 🧩 Key Features (MVP Week 1)
+## 🔧 Hardware Requirements
 
-### 📷 Multi-Mode Camera System
-- **USB Webcam Mode**
-- **POV Camera Mode** (record to SD card)
-- **Edge Detection Mode** (real-time outlines)
-- **Retro / Film-Style Filters**
-- **Flashlight & IR Modules**
+- **ESP32-S3-DevKitC** (or compatible)
+- **OV2640 Camera Module** (ESP32-CAM compatible)
+- **ST7735 TFT Display** (160x128)
+- **MicroSD Card** (for POV recording)
+- **Joystick + Buttons** (for input)
+- **Optional:** LED, IR LEDs
 
-### 🔌 Modular Hardware
-Users can attach:
-- LED flash modules  
-- IR emitters (night mode)  
-- Small TFT displays  
-- Rotary knobs / buttons  
-- Sensors (IMU, temperature, etc.)
+### Pin Configuration
 
-### 🧠 Flexible Firmware Architecture
-- Clean mode switching  
-- Filters pipeline  
-- Hardware module drivers  
-- Community mods folder  
+| Component | Pins |
+|-----------|------|
+| TFT Display | CS=5, DC=16, RST=17, SCK=18, MOSI=23 |
+| Joystick | X=34, Y=35 |
+| Buttons | A=32, B=33, X=26, Y=27, SEL=19, BACK=25 |
+| LED Flash | GPIO 4 |
+| IR LED | GPIO 2 |
+| SD Card | MOSI=13, MISO=12, CLK=14, CS=15 |
 
 ---
 
-# 🔄 OTA (Over-The-Air) Updates & Community OS Versions
+## 🚀 Quick Start
 
-OpenCamX will support **OTA updates**, allowing users to upgrade the firmware without opening the device or plugging it into a PC.
+### 1. Install PlatformIO
+```bash
+pip install platformio
+```
 
-## How OTA Works (Simple Explanation)
-- The camera connects to WiFi  
-- It checks a URL or GitHub release  
-- If a new version is available, it downloads the update  
-- No wires, no hassle  
+### 2. Clone & Build
+```bash
+git clone https://github.com/your-repo/OpenCamX.git
+cd OpenCamX
+pio run -e esp32s3
+```
 
-## Types of OS Versions
-
-### 1. **Official OpenCamX OS**
-Maintained by us.  
-Stable, curated, simple.
-
-Includes:
-- Core camera modes  
-- Official filters  
-- Supported modules  
-- Bug fixes & improvements  
-
-### 2. **Community OS**
-Anyone can create their own firmware "fork" with:
-- Custom filters  
-- Games  
-- Hardware drivers  
-- Entirely new UI/UX  
-- Experiments (CV, IR hacks, glitch art)  
-
-Users can choose:
-- **Stay on the official OS**
-- **Install a community OS**
-- **Build their own custom OS**
-
-Everything remains open-source.
-
-### 3. **OTA Channels**
-- **Stable** – official releases  
-- **Dev/Experimental** – for testers  
-- **Custom URLs** – for community OS updates  
+### 3. Flash to Device
+```bash
+pio run -e esp32s3 -t upload
+pio device monitor
+```
 
 ---
 
-# 🕹 TI Calculator–Style Modding (Core Philosophy)
+## 📂 Project Structure
 
-OpenCamX is intentionally designed to encourage **creative misuse**.
-
-We want people to:
-- Write tiny games  
-- Build retro displays  
-- Turn it into a scanner  
-- Make ASCII art cameras  
-- Add shaders  
-- Create mini apps  
-- Build their own hardware expansions  
-- Replace the OS entirely  
-
-This is the same culture that made TI calculators loved for:
-- Snake  
-- Doom  
-- Flappy Bird  
-- Custom OSes  
-- Math tools  
-- Graphic demos  
-
-**OpenCamX aims to replicate this culture—but for imaging.**
-
----
-
-# 🧱 Architecture (Explained Simply)
-
-### Hardware Breakdown
-- **ESP32-CAM** → The camera sensor  
-- **ESP32-S3** → The brain  
-  - processes images  
-  - applies filters  
-  - streams as a webcam  
-  - runs community mods  
-  - performs OTA updates  
-
-### Why two boards?
-Because the ESP32-CAM is great at capturing images  
-and the ESP32-S3 is great at everything else:
-- faster CPU  
-- more RAM  
-- supports USB webcam  
-- handles filters and modes  
-
-This keeps the device stable and upgradable.
+```
+OpenCamX/
+├── src/
+│   ├── main.cpp              # Entry point
+│   ├── core/
+│   │   ├── Camera.hpp        # Camera driver
+│   │   ├── Display.hpp       # TFT display
+│   │   ├── Game.hpp          # Mode registry
+│   │   ├── Input.hpp         # Joystick/buttons
+│   │   ├── Menu.hpp          # Menu system
+│   │   ├── ModeBase.hpp      # Camera mode interface
+│   │   └── OTA.hpp           # Firmware updates
+│   ├── modes/
+│   │   ├── WebcamMode.cpp    # USB webcam
+│   │   ├── POVMode.cpp       # Video recording
+│   │   ├── EdgeMode.cpp      # Edge detection
+│   │   └── RetroMode.cpp     # Vintage filters
+│   ├── filters/
+│   │   └── FilterChain.hpp   # Image filter pipeline
+│   ├── drivers/
+│   │   ├── LED.hpp           # Flashlight
+│   │   ├── IRLed.hpp         # Night vision
+│   │   └── SDCard.hpp        # SD card
+│   └── games/
+│       ├── Snake.cpp         # Classic games
+│       └── Pong.cpp
+├── mods/                      # Python mods (compiled by PyForge)
+│   └── example_invert.py
+├── tools/
+│   └── pyforge/              # Python-to-C++ transpiler
+│       ├── pyforge.py
+│       ├── prebuild.py
+│       └── pyforge_runtime.hpp
+└── platformio.ini
+```
 
 ---
 
-# 🖥 Example Features Made Easy for Non-Technical Users
+## 🐍 PyForge - Write Mods in Python
 
-### 1. **Edge Detection**
-The device outlines the edges of everything it sees → stylized video.
+PyForge lets you write image filters in Python, then compiles them to native C++ at build time.
 
-### 2. **Retro Filters**
-Yellow tint, grain, vignette → disposable camera vibe.
+### Example Filter (mods/my_filter.py)
+```python
+from camforge import Filter, Frame
 
-### 3. **Night Mode**
-IR LEDs allow the camera to see in the dark (no visible light needed).
+class InvertFilter(Filter):
+    def process(self, frame: Frame) -> Frame:
+        for y in range(frame.height):
+            for x in range(frame.width):
+                r, g, b = frame.get_pixel(x, y)
+                frame.set_pixel(x, y, 255 - r, 255 - g, 255 - b)
+        return frame
+```
 
-### 4. **Games**
-Simple pixel-based games can run on an attached display.
+### Manual Compilation
+```bash
+python tools/pyforge/pyforge.py -i mods/my_filter.py -o src/mods/my_filter.cpp
+```
 
-### 5. **Mods**
-Users can add `.cpp` or `.lua` files (future scripting) to create new modes.
-
----
-
-# 🚀 1-Week MVP Plan
-
-### **Day 1** – Repo, architecture, base firmware  
-### **Day 2** – Webcam mode  
-### **Day 3** – Filters engine (retro, grayscale, grain)  
-### **Day 4** – Edge detection mode  
-### **Day 5** – Flashlight & IR support  
-### **Day 6** – POV recorder  
-### **Day 7** – Docs + OTA setup + demo video  
-
-A simple, functional prototype is absolutely doable in one week.
+PyForge automatically compiles all `.py` files in `mods/` during PlatformIO build.
 
 ---
 
-# 🔮 Future Development Ideas
+## 📸 Camera Modes
 
-### 📦 Plugin System
-Drag-and-drop mods that auto-load on boot.
+### Webcam Mode
+- Streams via USB Video Class (UVC)
+- 640x480 @ 30fps MJPEG
+- Filter toggles: A=Grayscale, B=Sepia, X=LED
 
-### 💡 Scripting Support
-Lua or MicroPython layer for beginners.
+### POV Mode
+- Records to SD card (`/recordings/VID_*.avi`)
+- Press A to start/stop recording
+- LED flash indicator on save
 
-### 📡 Live Streaming
-RTSP / HTTP streaming from the camera.
+### Edge Detection
+- Real-time Sobel edge detection
+- 320x240 for performance
+- Adjustable threshold: X/Y buttons
 
-### 🎞 Shader-Style Filters
-Chromatic aberration, bloom, glitch effects.
-
-### 🧪 Tiny Machine Learning
-- motion detection  
-- face outline  
-- QR code detection  
-
-### 📱 Companion App
-OTA, settings, mod manager.
-
----
-
-# 👥 Community & Ecosystem
-
-### What we aim to build:
-
-- A Wiki with tutorials  
-- A Mods Library (filters, games, hardware add-ons)  
-- Community-maintained OS versions  
-
-We want OpenCamX to be a **hackable, playful, sophisticated, and educational platform** that grows with its users.
+### Retro Mode
+- Sepia, grain, vignette filters
+- Navigate with joystick
+- Adjust intensity: X/Y buttons
 
 ---
 
-# 📝 Summary
+## 🔄 OTA Updates
 
-OpenCamX is:
+```cpp
+// In your code:
+ota.connectWiFi("SSID", "password");
+if (ota.checkForUpdate("owner", "repo")) {
+    ota.performUpdate();
+}
+```
 
-- A **multi-purpose camera**
-- A **developer playground**
-- A **creative tool**
-- A **modding ecosystem**
-- A **hardware learning platform**
-- A **community-driven open-source OS**
+---
 
-It is the **TI calculator of cameras**, built for creativity, experimentation, and fun.
+## 🎮 Controls
+
+| Button | Action |
+|--------|--------|
+| **Joystick** | Navigate menu / adjust settings |
+| **A** | Select / Toggle primary |
+| **B** | Toggle secondary / LED |
+| **X/Y** | Increase/Decrease values |
+| **BACK** | Exit to menu |
+
+---
+
+## 📜 License
+
+MIT License - Use freely, mod freely, share freely.
+
+---
+
+## 🙏 Credits
+
+- **Teerth Sharma** - owner of seal cult
+- **Debyte** - Original game platform
+- **Espressif** - ESP32-S3 & esp32-camera
+- **Adafruit** - GFX & ST7735 libraries
 
