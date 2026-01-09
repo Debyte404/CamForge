@@ -15,9 +15,14 @@
 #define TFT_SCLK 40   // SPI Clock (shared)
 #define TFT_MOSI 39   // Master Out (shared)
 
+// ESP32-S3 uses FSPI, fall back to HSPI if not defined
+#ifndef FSPI
+  #define FSPI 1
+#endif
+
 // Global display + SPI
-inline SPIClass vspi(VSPI);
-inline Adafruit_ST7735 tft(TFT_CS, TFT_DC, TFT_RST);
+static SPIClass vspi(FSPI);
+static Adafruit_ST7735 tft(TFT_CS, TFT_DC, TFT_RST);
 
 // Call once at boot
 inline void displayInit() {
