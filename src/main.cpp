@@ -13,6 +13,9 @@
 #ifdef CONFIG_IDF_TARGET_ESP32S3
 #include "core/Camera.hpp"
 #include "core/ModeBase.hpp"
+#include "core/WiFiConfig.hpp"
+#include "core/OTA.hpp"
+#include "core/OTAWebUI.hpp"
 #include "drivers/LED.hpp"
 #include "drivers/IRLed.hpp"
 #include "drivers/SDCard.hpp"
@@ -153,9 +156,22 @@ void setup() {
   // Initialize LEDs
   led.init();
   irLed.init();
+  
+  // 5. Initialize WiFi and OTA system
+  Serial.println("[BOOT] Initializing WiFi...");
+  wifiConfig.init();
+  if (wifiConfig.connect()) {
+    Serial.println("[BOOT] WiFi connected, starting OTA...");
+    // Initialize OTA manager with your GitHub repo
+    otaManager.init("Debyte404", "CamForge");
+    otaManager.setCheckInterval(7200000);  // Check every 2 hours
+    // Start OTA web dashboard
+    otaWebUI.init(80);
+    Serial.println("[BOOT] OTA Web UI at http://" + wifiConfig.getIPAddress() + "/ota");
+  }
   #endif
 
-  // 5. Initialize input and menu
+  // 6. Initialize input and menu
   initInput();
   showSplash();
   initMenu();
@@ -169,6 +185,12 @@ void setup() {
 void loop() {
   // Safety tick - feeds watchdog & checks memory
   safety_tick();
+  
+  // OTA background tasks (non-blocking)
+  #ifdef CONFIG_IDF_TARGET_ESP32S3
+  otaManager.loop();   // Periodic update checks
+  otaWebUI.loop();     // Handle web requests
+  #endif
   
   // Check for critical errors
   if (safety_is_error_state()) {
