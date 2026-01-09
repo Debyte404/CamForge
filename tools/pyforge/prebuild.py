@@ -11,13 +11,20 @@ import os
 import sys
 from pathlib import Path
 
-# Add pyforge to path
-script_dir = Path(__file__).parent
+# Import SCons env first - required for PlatformIO extra_scripts
+Import("env")
+
+# Add pyforge to path - handle __file__ not being defined when run via SCons exec()
+try:
+    script_dir = Path(__file__).parent
+except NameError:
+    # When run via SCons exec(), __file__ is not defined
+    # Derive the script directory from PROJECT_DIR
+    script_dir = Path(env['PROJECT_DIR']) / "tools" / "pyforge"
+
 sys.path.insert(0, str(script_dir))
 
 from pyforge import compile_file
-
-Import("env")
 
 def before_build(source, target, env):
     """Called before build starts"""
