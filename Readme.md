@@ -15,7 +15,8 @@ OpenCamX transforms your ESP32-S3 into a **multi-purpose camera system** with US
 | **Edge Detection** | Real-time Sobel edge detection |
 | **10+ Filters** | Vintage, Cool, Vibrant, Sepia, Grayscale, Sharpen, Blur |
 | **PyForge** | Write mods in Python, compile to C++ |
-| **OTA Updates** | Download firmware from GitHub |
+| **OTA Updates** | Automatic firmware updates from GitHub Releases |
+| **OTA Web UI** | Beautiful web dashboard for manual updates |
 | **LED Flash** | Built-in flashlight control |
 | **IR Night Mode** | PWM-controlled IR LEDs |
 
@@ -80,7 +81,8 @@ OpenCamX/
 │   │   ├── Input.hpp         # Joystick/buttons
 │   │   ├── Menu.hpp          # Menu system
 │   │   ├── ModeBase.hpp      # Camera mode interface
-│   │   └── OTA.hpp           # Firmware updates
+│   │   ├── OTA.hpp           # Advanced OTA manager
+│   │   └── OTAWebUI.hpp      # OTA web dashboard
 │   ├── modes/
 │   │   ├── WebcamMode.cpp    # USB webcam
 │   │   ├── POVMode.cpp       # Video recording
@@ -159,13 +161,54 @@ PyForge automatically compiles all `.py` files in `mods/` during PlatformIO buil
 
 ## 🔄 OTA Updates
 
+CamForge features a **hyper-advanced OTA system** that automatically checks GitHub Releases for new firmware.
+
+### Automatic Updates
+
+Once connected to WiFi, your device will:
+1. Check for updates every 2 hours (configurable)
+2. Compare semantic versions (vX.Y.Z)
+3. Download and install automatically (or notify via callback)
+
+### Web Dashboard
+
+Access the OTA web interface at `http://<device-ip>/ota`:
+
+- View current and latest versions
+- Check for updates manually
+- Install updates with one click
+- Real-time progress display
+
+### Programmatic Control
+
 ```cpp
-// In your code:
-ota.connectWiFi("SSID", "password");
-if (ota.checkForUpdate("owner", "repo")) {
-    ota.performUpdate();
+// Initialize (already done in main.cpp)
+otaManager.init("Debyte404", "CamForge");
+otaManager.setCheckInterval(3600000);  // 1 hour
+
+// Manual check
+if (otaManager.checkForUpdate()) {
+    Serial.println("Update available!");
+    otaManager.performUpdate();  // Downloads and reboots
 }
+
+// Get version info
+String current = otaManager.getCurrentVersion();  // "v1.0.0"
+String latest = otaManager.getLatestVersion();    // "v1.1.0"
 ```
+
+### Publishing Updates (For Developers)
+
+1. Create a version tag:
+   ```bash
+   git tag v1.1.0
+   git push origin v1.1.0
+   ```
+
+2. GitHub Actions automatically:
+   - Builds the firmware
+   - Creates a Release with the `.bin` attached
+   - Devices detect the update within 2 hours
 
 ---
 
