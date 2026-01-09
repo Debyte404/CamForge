@@ -1,5 +1,9 @@
 # 🔌 OpenCamX Wiring Guide
 
+> [!WARNING]
+> **This document contains outdated pin mappings!**
+> Please refer to the **[Build Guide](BUILD_GUIDE.md)** for accurate, up-to-date wiring information.
+
 Complete hardware connection guide for ESP32-S3 with camera, display, and peripherals.
 
 ---

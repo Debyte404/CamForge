@@ -20,9 +20,9 @@
   #define FSPI 1
 #endif
 
-// Global display + SPI
-static SPIClass vspi(FSPI);
-static Adafruit_ST7735 tft(TFT_CS, TFT_DC, TFT_RST);
+// Global display + SPI (C++17 inline variables)
+inline SPIClass vspi(FSPI);
+inline Adafruit_ST7735 tft(TFT_CS, TFT_DC, TFT_RST);
 
 // Call once at boot
 inline void displayInit() {

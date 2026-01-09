@@ -33,6 +33,8 @@ OpenCamX transforms your ESP32-S3 into a **multi-purpose camera system** with US
 - **Joystick + Buttons** (for input)
 - **Optional:** LED, IR LEDs
 
+> 📖 **New to hardware?** Check out the **[Complete Build Guide](docs/BUILD_GUIDE.md)** for step-by-step assembly instructions with wiring diagrams!
+
 ### Pin Configuration
 
 | Component | Pins |
