@@ -53,7 +53,7 @@ jobs:
         run: pio run -e ${{ matrix.environment }}
       
       - name: Upload Firmware Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: firmware-${{ matrix.environment }}
           path: .pio/build/${{ matrix.environment }}/firmware.bin
@@ -90,7 +90,7 @@ jobs:
             src/ 2>&1 | tee cppcheck-report.txt
       
       - name: Upload cppcheck Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         if: always()
         with:
           name: cppcheck-report
