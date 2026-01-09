@@ -16,6 +16,11 @@
 
 extern Adafruit_ST7735 tft;
 
+// Define missing color constant (not in Adafruit library)
+#ifndef ST77XX_DARKGREY
+#define ST77XX_DARKGREY 0x7BEF
+#endif
+
 static bool retroActive = false;
 static int activeFilter = 0;  // Which filter is selected for adjustment
 

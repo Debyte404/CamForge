@@ -11,6 +11,7 @@
 #include "../core/Camera.hpp"
 #include "../core/ModeBase.hpp"
 #include "../filters/FilterChain.hpp"
+#include "../drivers/LED.hpp"
 #include <Adafruit_ST7735.h>
 
 // Note: TinyUSB UVC requires ESP-IDF configuration
@@ -109,7 +110,6 @@ void webcamLoop() {
     }
     if (xPressedD()) {
         // Toggle LED
-        extern LEDDriver led;
         led.toggle();
     }
 }
